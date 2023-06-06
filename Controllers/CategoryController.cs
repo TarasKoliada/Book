@@ -59,7 +59,7 @@ namespace BookWeb.Controllers
             return View();
         }
 
-        public IActionResult Delete(int id) 
+        public IActionResult Delete(int? id) 
         {
             if (id == null || id == 0)
                 return NotFound();
@@ -69,6 +69,17 @@ namespace BookWeb.Controllers
                 return NotFound();
 
             return View(categoryToEdit);
+        }
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteCategory(int? id)
+        {
+            var categoryToDelete = _context.Categories.FirstOrDefault(c => c.Id == id);
+            if(categoryToDelete == null)
+                return NotFound(categoryToDelete);
+
+            _context.Categories.Remove(categoryToDelete);
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Category");
         }
     }
 }
