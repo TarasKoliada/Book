@@ -15,5 +15,10 @@ namespace BookWeb.Controllers
             var categories = _context.Categories.ToList();
             return View(categories);
         }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
     }
 }
