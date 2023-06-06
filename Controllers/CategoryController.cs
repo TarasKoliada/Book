@@ -46,5 +46,17 @@ namespace BookWeb.Controllers
 
             return View(categoryToEdit);
         }
+
+        [HttpPost]
+        public IActionResult Edit(Category category) 
+        {
+            if (ModelState.IsValid) 
+            {
+                _context.Categories.Update(category);
+                _context.SaveChanges();
+                return RedirectToAction("Index", "Category");
+            }
+            return View();
+        }
     }
 }
