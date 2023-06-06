@@ -25,9 +25,14 @@ namespace BookWeb.Controllers
         [HttpPost]
         public IActionResult Create(Category category)
         {
-            _context.Categories.Add(category);
-            _context.SaveChanges();
-            return RedirectToAction("Index", "Category");
+            //Check if category model pass all validations initialized in Category.cs
+            if(ModelState.IsValid)
+            { 
+                _context.Categories.Add(category);
+                _context.SaveChanges();
+                return RedirectToAction("Index", "Category");
+            }
+            return View();
         }
     }
 }
