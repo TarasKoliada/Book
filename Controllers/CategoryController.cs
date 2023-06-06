@@ -58,5 +58,17 @@ namespace BookWeb.Controllers
             }
             return View();
         }
+
+        public IActionResult Delete(int id) 
+        {
+            if (id == null || id == 0)
+                return NotFound();
+
+            var categoryToEdit = _context.Categories.FirstOrDefault(c => c.Id == id);
+            if (categoryToEdit == null)
+                return NotFound();
+
+            return View(categoryToEdit);
+        }
     }
 }
