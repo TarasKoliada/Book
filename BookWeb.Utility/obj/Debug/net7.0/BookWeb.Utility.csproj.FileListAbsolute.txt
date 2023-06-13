@@ -1,0 +1,12 @@
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\bin\Debug\net7.0\BookWeb.Utility.deps.json
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\bin\Debug\net7.0\BookWeb.Utility.dll
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\bin\Debug\net7.0\BookWeb.Utility.pdb
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\obj\Debug\net7.0\BookWeb.Utility.csproj.AssemblyReference.cache
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\obj\Debug\net7.0\BookWeb.Utility.GeneratedMSBuildEditorConfig.editorconfig
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\obj\Debug\net7.0\BookWeb.Utility.AssemblyInfoInputs.cache
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\obj\Debug\net7.0\BookWeb.Utility.AssemblyInfo.cs
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\obj\Debug\net7.0\BookWeb.Utility.csproj.CoreCompileInputs.cache
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\obj\Debug\net7.0\BookWeb.Utility.dll
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\obj\Debug\net7.0\refint\BookWeb.Utility.dll
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\obj\Debug\net7.0\BookWeb.Utility.pdb
+D:\SelfStudying\ASP.NET projects\BookWeb.Utility\obj\Debug\net7.0\ref\BookWeb.Utility.dll

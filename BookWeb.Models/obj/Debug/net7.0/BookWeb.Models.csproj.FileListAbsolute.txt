@@ -1,0 +1,12 @@
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\bin\Debug\net7.0\BookWeb.Models.deps.json
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\bin\Debug\net7.0\BookWeb.Models.dll
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\bin\Debug\net7.0\BookWeb.Models.pdb
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\obj\Debug\net7.0\BookWeb.Models.csproj.AssemblyReference.cache
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\obj\Debug\net7.0\BookWeb.Models.GeneratedMSBuildEditorConfig.editorconfig
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\obj\Debug\net7.0\BookWeb.Models.AssemblyInfoInputs.cache
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\obj\Debug\net7.0\BookWeb.Models.AssemblyInfo.cs
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\obj\Debug\net7.0\BookWeb.Models.csproj.CoreCompileInputs.cache
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\obj\Debug\net7.0\BookWeb.Models.dll
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\obj\Debug\net7.0\refint\BookWeb.Models.dll
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\obj\Debug\net7.0\BookWeb.Models.pdb
+D:\SelfStudying\ASP.NET projects\BookWeb.Models\obj\Debug\net7.0\ref\BookWeb.Models.dll
