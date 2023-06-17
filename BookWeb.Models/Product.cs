@@ -39,6 +39,7 @@ namespace BookWeb.Models
         [Range(1, 1000, ErrorMessage = "Price for 100+ must be between 1-1000")]
         public double Price100 { get; set; }
 
+        [Display(Name = "Category")]
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
