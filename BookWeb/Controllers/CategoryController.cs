@@ -1,4 +1,5 @@
 ﻿using BookWeb.DataAccess.Data;
+using BookWeb.DataAccess.Repository.IRepository;
 using BookWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,14 +7,14 @@ namespace BookWeb.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public CategoryController(ApplicationDbContext dbContext)
+        private readonly ICategoryRepository _categoryRepo;
+        public CategoryController(ICategoryRepository repository)
         {
-            _context = dbContext;
+            _categoryRepo = repository;
         }
         public IActionResult Index()
         {
-            var categories = _context.Categories.ToList();
+            var categories = _categoryRepo.GetAll().ToList();
             return View(categories);
         }
 
@@ -28,8 +29,8 @@ namespace BookWeb.Controllers
             //Check if category model pass all validations initialized in Category.cs
             if(ModelState.IsValid)
             { 
-                _context.Categories.Add(category);
-                _context.SaveChanges();
+                _categoryRepo.Add(category);
+                _categoryRepo.Save();
                 TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index", "Category");
             }
@@ -41,8 +42,8 @@ namespace BookWeb.Controllers
             if(id == null || id == 0)
                 return NotFound();
 
-            var categoryToEdit = _context.Categories.FirstOrDefault(c => c.Id == id);
-            if(categoryToEdit == null)
+            var categoryToEdit = _categoryRepo.Get(c => c.Id == id);
+            if (categoryToEdit == null)
                 return NotFound();
 
             return View(categoryToEdit);
@@ -53,8 +54,8 @@ namespace BookWeb.Controllers
         {
             if (ModelState.IsValid) 
             {
-                _context.Categories.Update(category);
-                _context.SaveChanges();
+                _categoryRepo.Update(category);
+                _categoryRepo.Save();
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index", "Category");
             }
@@ -66,21 +67,21 @@ namespace BookWeb.Controllers
             if (id == null || id == 0)
                 return NotFound();
 
-            var categoryToEdit = _context.Categories.FirstOrDefault(c => c.Id == id);
-            if (categoryToEdit == null)
+            var categoryToDelete = _categoryRepo.Get(c => c.Id == id);
+            if (categoryToDelete == null)
                 return NotFound();
 
-            return View(categoryToEdit);
+            return View(categoryToDelete);
         }
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteCategory(int? id)
         {
-            var categoryToDelete = _context.Categories.FirstOrDefault(c => c.Id == id);
-            if(categoryToDelete == null)
+            var categoryToDelete = _categoryRepo.Get(c => c.Id == id);
+            if (categoryToDelete == null)
                 return NotFound(categoryToDelete);
 
-            _context.Categories.Remove(categoryToDelete);
-            _context.SaveChanges();
+            _categoryRepo.Remove(categoryToDelete);
+            _categoryRepo.Save();
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index", "Category");
         }
