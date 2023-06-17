@@ -33,6 +33,43 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+# Visual Studio files
+*.suo
+*.user
+*.vs/
+*.vshost.*
+*.cache
+*.dll
+*.pdb
+*.bak
+*.tmp
+*.log
+*.bin
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+obj/
+bin/
+*.exe
+*.dll
+*.log
+*.txt
+
+# NuGet packages
+packages/
+*.nupkg
+debug/
+release/
+*.dbmdl
+*.dbproj.user
+*.pfx
+*.publishsettings
+*.cache
+*.csproj.user
+*.bak
+*.cache
+
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
