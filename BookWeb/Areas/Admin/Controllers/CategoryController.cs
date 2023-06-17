@@ -3,8 +3,9 @@ using BookWeb.DataAccess.Repository.IRepository;
 using BookWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookWeb.Controllers
+namespace BookWeb.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -27,8 +28,8 @@ namespace BookWeb.Controllers
         public IActionResult Create(Category category)
         {
             //Check if category model pass all validations initialized in Category.cs
-            if(ModelState.IsValid)
-            { 
+            if (ModelState.IsValid)
+            {
                 _unitOfWork.Category.Add(category);
                 _unitOfWork.Save();
                 TempData["success"] = "Category created successfully";
@@ -37,9 +38,9 @@ namespace BookWeb.Controllers
             return View();
         }
 
-        public IActionResult Edit(int? id) 
+        public IActionResult Edit(int? id)
         {
-            if(id == null || id == 0)
+            if (id == null || id == 0)
                 return NotFound();
 
             var categoryToEdit = _unitOfWork.Category.Get(c => c.Id == id);
@@ -50,9 +51,9 @@ namespace BookWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Category category) 
+        public IActionResult Edit(Category category)
         {
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
                 _unitOfWork.Category.Update(category);
                 _unitOfWork.Save();
@@ -62,7 +63,7 @@ namespace BookWeb.Controllers
             return View();
         }
 
-        public IActionResult Delete(int? id) 
+        public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
                 return NotFound();
