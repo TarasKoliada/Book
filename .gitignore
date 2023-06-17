@@ -398,3 +398,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/BookWeb.DataAccess/bin/Debug/net7.0/BookWeb.DataAccess.dll
+/BookWeb.DataAccess/obj/Debug/net7.0/refint/BookWeb.DataAccess.dll
+/BookWeb.DataAccess/obj/Debug/net7.0/refint/BookWeb.DataAccess.dll
+/BookWeb.DataAccess/obj/Debug/net7.0/ref/BookWeb.DataAccess.dll
+/BookWeb.DataAccess/obj/Debug/net7.0/BookWeb.DataAccess.pdb
+/BookWeb.DataAccess/obj/Debug/net7.0/BookWeb.DataAccess.dll
+/BookWeb.DataAccess/bin/Debug/net7.0/BookWeb.DataAccess.pdb
+/BookWeb.DataAccess/bin/Debug/net7.0/BookWeb.DataAccess.dll
