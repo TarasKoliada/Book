@@ -1,5 +1,6 @@
 ﻿using BookWeb.DataAccess.Repository.IRepository;
 using BookWeb.Models;
+using BookWeb.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -20,28 +21,39 @@ namespace BookWeb.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            //Convert every category item to SelectListItem only with 2 fields - Name and Id
-            IEnumerable<SelectListItem> categoryList = _unitOfWork.Category.GetAll().Select(c => new SelectListItem
+            ProductVM product = new()
             {
-                Text = c.Name,
-                Value = c.Id.ToString()
-            });
-            //ViewBag - dynamic property, transfers data from controller to view and its life lasts during the current http request
-            ViewBag.CategoryList = categoryList;
-            return View();
+                //Convert every category item to SelectListItem only with 2 fields - Name and Id
+
+                CategoryList = _unitOfWork.Category.GetAll().Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString()
+                }),
+                Product = new Product()
+            };
+            return View(product);
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult Create(ProductVM productVM)
         {
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(product);
+                _unitOfWork.Product.Add(productVM.Product);
                 _unitOfWork.Save();
                 TempData["success"] = "Product created successfully";
                 return RedirectToAction("Index", "Product");
             }
-            return View();
+            else 
+            {
+                productVM.CategoryList = _unitOfWork.Category.GetAll().Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString()
+                });
+                return View(productVM);
+            }
         }
 
         public IActionResult Edit(int? id)
