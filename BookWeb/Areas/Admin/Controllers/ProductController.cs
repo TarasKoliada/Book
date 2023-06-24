@@ -19,24 +19,23 @@ namespace BookWeb.Areas.Admin.Controllers
             return View(_unitOfWork.Product.GetAll().ToList());
         }
 
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
             ProductVM product = new()
             {
                 //Convert every category item to SelectListItem only with 2 fields - Name and Id
-
                 CategoryList = _unitOfWork.Category.GetAll().Select(c => new SelectListItem
                 {
                     Text = c.Name,
                     Value = c.Id.ToString()
                 }),
-                Product = new Product()
+                Product = id == null ? new Product() : _unitOfWork.Product.Get(p => p.Id == id)
             };
             return View(product);
         }
 
         [HttpPost]
-        public IActionResult Create(ProductVM productVM)
+        public IActionResult Upsert(ProductVM productVM, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
@@ -54,32 +53,6 @@ namespace BookWeb.Areas.Admin.Controllers
                 });
                 return View(productVM);
             }
-        }
-
-        public IActionResult Edit(int? id)
-        {
-            if (id == null || id == 0)
-                return NotFound();
-
-            var productToEdit = _unitOfWork.Product.Get(p => p.Id == id);
-            if (productToEdit == null)
-                return NotFound();
-
-            return View(productToEdit);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Product product)
-        {
-            //if modelState is valid - update, else return the same Edit view till modelstate become valid
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.Product.Update(product);
-                _unitOfWork.Save();
-                TempData["success"] = "Product updated successfully";
-                return RedirectToAction("Index", "Product");
-            }
-            return View();
         }
 
         public IActionResult Delete(int? id) 
