@@ -44,18 +44,10 @@ namespace BookWeb.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var wwwRootPath = _webHostEnvironment.WebRootPath;
-                if (file != null)
-                {
-                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    var filePath = Path.Combine(wwwRootPath, @"images\product");
+                ProcessProductImage(ref productVM, file);
+                if (productVM.Product.Id == 0) _unitOfWork.Product.Add(productVM.Product);
+                else _unitOfWork.Product.Update(productVM.Product);
 
-                    using var fileStream = new FileStream(Path.Combine(filePath, fileName), FileMode.Create);
-                    file.CopyTo(fileStream);
-
-                    productVM.Product.ImageUrl = @"images\product" + fileName; 
-                }
-                _unitOfWork.Product.Add(productVM.Product);
                 _unitOfWork.Save();
                 TempData["success"] = "Product created successfully";
                 return RedirectToAction("Index", "Product");
@@ -68,6 +60,30 @@ namespace BookWeb.Areas.Admin.Controllers
                     Value = c.Id.ToString()
                 });
                 return View(productVM);
+            }
+        }
+        private void ProcessProductImage(ref ProductVM productVM, IFormFile? file)
+        {
+            var wwwRootPath = _webHostEnvironment.WebRootPath;
+            if (file != null)
+            {
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                var filePath = Path.Combine(wwwRootPath, @"images\product");
+
+                if (!string.IsNullOrEmpty(productVM.Product.ImageUrl))
+                {
+                    var oldImgPath = Path.Combine(wwwRootPath, productVM.Product.ImageUrl.TrimStart('\\'));
+
+                    if (System.IO.File.Exists(oldImgPath))
+                    {
+                        System.IO.File.Delete(oldImgPath);
+                    }
+                }
+
+                using var fileStream = new FileStream(Path.Combine(filePath, fileName), FileMode.Create);
+                file.CopyTo(fileStream);
+
+                productVM.Product.ImageUrl = @"\images\product\" + fileName;
             }
         }
 
