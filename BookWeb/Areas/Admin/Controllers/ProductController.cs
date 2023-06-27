@@ -21,7 +21,7 @@ namespace BookWeb.Areas.Admin.Controllers
         public IActionResult Index()
         {
             
-            return View(_unitOfWork.Product.GetAll().ToList());
+            return View(_unitOfWork.Product.GetAll(includeProperties: "Category").ToList());
         }
 
         public IActionResult Upsert(int? id)
