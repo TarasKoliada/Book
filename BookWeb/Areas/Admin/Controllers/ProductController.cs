@@ -95,6 +95,7 @@ namespace BookWeb.Areas.Admin.Controllers
             return Json(new { data = products });
         }
 
+        [HttpDelete]
         public IActionResult Delete(int? id)
         {
             var productToDelete = _unitOfWork.Product.Get(p => p.Id == id);
