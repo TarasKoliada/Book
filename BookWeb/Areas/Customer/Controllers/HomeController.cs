@@ -17,11 +17,8 @@ namespace BookWeb.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
-        {
-            return View(_unitOfWork.Product.GetAll(includeProperties: "Category"));
-        }
-
+        public IActionResult Index() => View(_unitOfWork.Product.GetAll(includeProperties: "Category"));
+        public IActionResult Details(int id) => View(_unitOfWork.Product.Get(p => p.Id == id, includeProperties: "Category"));
         public IActionResult Privacy()
         {
             return View();
