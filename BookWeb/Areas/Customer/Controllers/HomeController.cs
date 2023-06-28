@@ -1,4 +1,5 @@
-﻿using BookWeb.Models;
+﻿using BookWeb.DataAccess.Repository.IRepository;
+using BookWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -8,15 +9,17 @@ namespace BookWeb.Areas.Customer.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return View(_unitOfWork.Product.GetAll(includeProperties: "Category"));
         }
 
         public IActionResult Privacy()
