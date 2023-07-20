@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookWeb.DataAccess\BookWeb.DataAccess.csproj" />
+    <ProjectReference Include="..\BookWeb.Utility\BookWeb.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>
