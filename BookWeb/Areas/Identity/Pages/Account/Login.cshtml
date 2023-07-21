@@ -1,8 +1,8 @@
 ﻿@page
 @model LoginModel
 
-<div class="card shadow border-0 mt-4">
-    <div class="card-header bg-secondary bg-gradient ml-0 py-4">
+<div class="card shadow border-0 mt-4 small" style="top:-8px;">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-2">
         <div class="row">
             <div class="col-12 text-center">
                 <h2 class="py-2 text-white">Log in</h2>
@@ -57,7 +57,7 @@
                         if ((Model.ExternalLogins?.Count ?? 0) == 0)
                         {
                             <div>
-                                <p>
+                                <p class="mb-0">
                                     There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
                                         article
                                         about setting up this ASP.NET application to support logging in via external services
@@ -83,6 +83,8 @@
             </div>
         </div>
     </div>
+</div>
+<div class="m-5">
 </div>
 
 
