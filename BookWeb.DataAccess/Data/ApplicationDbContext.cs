@@ -26,6 +26,11 @@ namespace BookWeb.DataAccess.Data
                 new Category { Id = 2, Name = "SciFi", DisplayOrder = 2 },
                 new Category { Id = 3, Name = "History", DisplayOrder = 3 });
 
+            modelBuilder.Entity<Company>().HasData(
+                new Company { Id = 1, Name = "Tech Solution", StreetAddress = "123 Tech St.", City = "Tech City", PostalCode = "12212", State = "IL", PhoneNumber = "123456789" },
+                new Company { Id = 2, Name = "Vivid Books", StreetAddress = "999 Vid St.", City = "Vid City", PostalCode = "18412", State = "IL", PhoneNumber = "987654321" },
+                new Company { Id = 3, Name = "readers Club", StreetAddress = "264 Main St.", City = "Lala land", PostalCode = "92112", State = "NY", PhoneNumber = "736871728" });
+
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
