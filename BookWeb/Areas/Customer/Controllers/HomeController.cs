@@ -41,13 +41,15 @@ namespace BookWeb.Areas.Customer.Controllers
             {
                 cartFromDb.Count += shoppingCart.Count;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
+                TempData["success"] = "Cart updated successfully";
             }
             else //shopping cart didnt exist
             {
                 shoppingCart.UserId = userId;
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+                TempData["success"] = "Cart created successfully";
             }
-
+            
             _unitOfWork.Save();
 
             return RedirectToAction(nameof(Index));
