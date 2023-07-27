@@ -18,7 +18,12 @@ namespace BookWeb.Areas.Customer.Controllers
         }
 
         public IActionResult Index() => View(_unitOfWork.Product.GetAll(includeProperties: "Category"));
-        public IActionResult Details(int id) => View(_unitOfWork.Product.Get(p => p.Id == id, includeProperties: "Category"));
+        public IActionResult Details(int id) => View(new ShoppingCart 
+        {
+            Product = _unitOfWork.Product.Get(p => p.Id == id, includeProperties: "Category"), 
+            ProductId = id, 
+            Count = 1 
+        });
         public IActionResult Privacy()
         {
             return View();
