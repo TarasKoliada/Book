@@ -1,7 +1,9 @@
 ﻿using BookWeb.DataAccess.Repository.IRepository;
 using BookWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BookWeb.Areas.Customer.Controllers
 {
@@ -24,6 +26,33 @@ namespace BookWeb.Areas.Customer.Controllers
             ProductId = id, 
             Count = 1 
         });
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+            shoppingCart.Id = 0;
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var cartFromDb = _unitOfWork.ShoppingCart.Get(sc => sc.UserId == userId && sc.ProductId == shoppingCart.ProductId);
+            if (cartFromDb != null) //shopping cart exist
+            {
+                cartFromDb.Count += shoppingCart.Count;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+            else //shopping cart didnt exist
+            {
+                shoppingCart.UserId = userId;
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
+            }
+
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         public IActionResult Privacy()
         {
             return View();
