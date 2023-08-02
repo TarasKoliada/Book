@@ -1,4 +1,5 @@
 ﻿using BookWeb.DataAccess.Repository.IRepository;
+using BookWeb.Models;
 using BookWeb.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,10 +24,31 @@ namespace BookWeb.Areas.Customer.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             ShoppingCartVM = new()
-            {
+            { 
                 ShoppingCartsList = _unitOfWork.ShoppingCart.GetAll(sc => sc.UserId == userId, includeProperties: "Product")
             };
+
+            foreach (var cart in ShoppingCartVM.ShoppingCartsList)
+            {
+                cart.ItemPrice = GetPriceBasedOnOrderedQuantity(cart);
+                ShoppingCartVM.OrderTotal += cart.ItemPrice * cart.Count;
+            }
+
             return View(ShoppingCartVM);
+        }
+
+        private double GetPriceBasedOnOrderedQuantity(ShoppingCart shoppingCart)
+        {
+            if (shoppingCart == null)
+                return 0;
+
+            if (shoppingCart.Count <= 50)
+                return shoppingCart.Product.Price;
+
+            else if (shoppingCart.Count <= 100)
+                return shoppingCart.Product.Price50;
+
+            else return shoppingCart.Product.Price100;
         }
     }
 }
