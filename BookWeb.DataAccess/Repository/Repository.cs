@@ -13,21 +13,21 @@ namespace BookWeb.DataAccess.Repository
     public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _context;
-        internal DbSet<T> dbSet;
+        internal DbSet<T> entitySet;
         public Repository(ApplicationDbContext context)
         {
             _context = context;
-            dbSet = context.Set<T>();
+            entitySet = context.Set<T>();
         }
-        public void Add(T entity) => dbSet.Add(entity);
+        public void Add(T entity) => entitySet.Add(entity);
 
-        public void Remove(T entity) => dbSet.Remove(entity);
+        public void Remove(T entity) => entitySet.Remove(entity);
 
-        public void RemoveRange(IEnumerable<T> entities) => dbSet.RemoveRange(entities);
+        public void RemoveRange(IEnumerable<T> entities) => entitySet.RemoveRange(entities);
 
         public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query = entitySet;
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
@@ -38,9 +38,13 @@ namespace BookWeb.DataAccess.Repository
             return query.Where(filter).FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll(string? includeProperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query = entitySet;
+
+            if (filter != null)
+                query = query.Where(filter);
+
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)) 
