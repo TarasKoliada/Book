@@ -37,6 +37,11 @@ namespace BookWeb.Areas.Customer.Controllers
             return View(ShoppingCartVM);
         }
 
+        public IActionResult Summary()
+        {
+            return View();
+        }
+
         public IActionResult IncreaseQuantity(int cartItemId)
         {
             var cartItem = _unitOfWork.ShoppingCart.Get(sc => sc.Id == cartItemId);
