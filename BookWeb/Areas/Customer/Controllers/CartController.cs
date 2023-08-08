@@ -25,13 +25,14 @@ namespace BookWeb.Areas.Customer.Controllers
 
             ShoppingCartVM = new()
             { 
-                ShoppingCartsList = _unitOfWork.ShoppingCart.GetAll(sc => sc.UserId == userId, includeProperties: "Product")
+                ShoppingCartsList = _unitOfWork.ShoppingCart.GetAll(sc => sc.UserId == userId, includeProperties: "Product"),
+                OrderHeader = new()
             };
 
             foreach (var cart in ShoppingCartVM.ShoppingCartsList)
             {
                 cart.ItemPrice = GetPriceBasedOnOrderedQuantity(cart);
-                ShoppingCartVM.OrderTotal += cart.ItemPrice * cart.Count;
+                ShoppingCartVM.OrderHeader.OrderTotal += cart.ItemPrice * cart.Count;
             }
 
             return View(ShoppingCartVM);
