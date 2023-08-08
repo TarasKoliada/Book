@@ -1,6 +1,7 @@
 ﻿using BookWeb.DataAccess.Repository.IRepository;
 using BookWeb.Models;
 using BookWeb.Models.ViewModels;
+using BookWeb.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -13,7 +14,8 @@ namespace BookWeb.Areas.Customer.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private ShoppingCartVM ShoppingCartVM { get; set; }
+        [BindProperty]
+        public ShoppingCartVM ShoppingCartVM { get; set; }
 
         public CartController(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
@@ -48,7 +50,55 @@ namespace BookWeb.Areas.Customer.Controllers
 
             return View(ShoppingCartVM);
         }
-       
+
+        [HttpPost]
+        [ActionName("Summary")]
+        public IActionResult SummaryPOST()
+        {
+            var currentUserId = GetCurrentUserId();
+            ShoppingCartVM.ShoppingCartsList = _unitOfWork.ShoppingCart.GetAll(sc => sc.UserId == currentUserId, includeProperties: "Product");
+
+            ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
+            ShoppingCartVM.OrderHeader.ApplicationUserId = currentUserId;
+            ShoppingCartVM.OrderHeader.OrderTotal = CalculateCurrentUserOrderTotal();
+
+            var applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == currentUserId);
+
+            if (!User.IsInRole(StaticDetails.Role_Company))
+            {
+                ShoppingCartVM.OrderHeader.OrderStatus = StaticDetails.StatusPending;
+                ShoppingCartVM.OrderHeader.PaymentStatus = StaticDetails.PaymentStatusPending;
+            }
+            else
+            {
+				ShoppingCartVM.OrderHeader.OrderStatus = StaticDetails.StatusApproved;
+				ShoppingCartVM.OrderHeader.PaymentStatus = StaticDetails.PaymentStatusDelayedPayment;
+			}
+
+            _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+            _unitOfWork.Save();
+
+            foreach (var cart in ShoppingCartVM.ShoppingCartsList)
+            {
+                OrderDetail orderDetail = new()
+                {
+                    ProductId = cart.ProductId,
+                    OrderHeaderId = ShoppingCartVM.OrderHeader.Id,
+                    Count = cart.Count,
+                    Price = cart.ItemPrice
+                };
+                _unitOfWork.OrderDetail.Add(orderDetail);
+                _unitOfWork.Save();
+            }
+
+
+            return RedirectToAction(nameof(OrderConfirmation), new { orderId = ShoppingCartVM.OrderHeader.Id});
+        }
+
+        public IActionResult OrderConfirmation(int orderId) 
+        {
+            return View(orderId);
+        }
         public IActionResult IncreaseQuantity(int cartItemId)
         {
             var cartItem = _unitOfWork.ShoppingCart.Get(sc => sc.Id == cartItemId);
