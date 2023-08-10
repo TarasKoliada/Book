@@ -113,6 +113,23 @@ namespace BookWeb.Areas.Customer.Controllers
 
         public IActionResult OrderConfirmation(int orderId) 
         {
+            var orderHeader = _unitOfWork.OrderHeader.Get(oh => oh.Id == orderId, includeProperties: "ApplicationUser");
+            if (orderHeader.PaymentStatus != StaticDetails.PaymentStatusDelayedPayment)
+            {
+                //this is a customer order
+                var stripeService = new SessionService();
+                var paymentSession = stripeService.Get(orderHeader.SessionId);
+                if (paymentSession.PaymentStatus.ToLower() == "paid")
+                {
+					_unitOfWork.OrderHeader.UpdateStripePaymentId(orderHeader.Id, paymentSession.Id, paymentSession.PaymentIntentId);
+                    _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved);
+                    _unitOfWork.Save();
+				}
+            }
+            var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(sc => sc.UserId == orderHeader.ApplicationUserId).ToList();
+            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+            _unitOfWork.Save();
+
             return View(orderId);
         }
         public IActionResult IncreaseQuantity(int cartItemId)
