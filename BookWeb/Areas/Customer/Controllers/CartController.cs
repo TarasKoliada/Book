@@ -4,6 +4,7 @@ using BookWeb.Models.ViewModels;
 using BookWeb.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace BookWeb.Areas.Customer.Controllers
@@ -91,6 +92,21 @@ namespace BookWeb.Areas.Customer.Controllers
                 _unitOfWork.Save();
             }
 
+            //If not Company Role - call Stripe payment system
+            if (!User.IsInRole(StaticDetails.Role_Company))
+            {
+                var stripeSessionOptions = ConfigureStripeSessionOptions();
+
+                SetCartItemsToStripePaymentSession(ref stripeSessionOptions);
+
+				var service = new SessionService();
+				Session session = service.Create(stripeSessionOptions);
+
+                _unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+                _unitOfWork.Save();
+                Response.Headers.Add("Location", session.Url);
+                return new StatusCodeResult(303);
+			}
 
             return RedirectToAction(nameof(OrderConfirmation), new { orderId = ShoppingCartVM.OrderHeader.Id});
         }
@@ -132,6 +148,37 @@ namespace BookWeb.Areas.Customer.Controllers
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
+        private SessionCreateOptions ConfigureStripeSessionOptions()
+        {
+			var domain = "https://localhost:44368/";
+			return new SessionCreateOptions
+			{
+				SuccessUrl = domain + $"customer/cart/OrderConfirmation?orderId={ShoppingCartVM.OrderHeader.Id}",
+				CancelUrl = domain + "customer/cart/index",
+				LineItems = new List<SessionLineItemOptions>(),
+				Mode = "payment",
+			};
+		}
+        private void SetCartItemsToStripePaymentSession(ref SessionCreateOptions stripeSessionOptions)
+        {
+			foreach (var item in ShoppingCartVM.ShoppingCartsList)
+			{
+				var sessionItem = new SessionLineItemOptions
+				{
+					PriceData = new SessionLineItemPriceDataOptions()
+					{
+						UnitAmount = (long)(item.ItemPrice * 100), //$20.50 => 2050
+						Currency = "usd",
+						ProductData = new SessionLineItemPriceDataProductDataOptions()
+						{
+							Name = item.Product.Title
+						}
+					},
+					Quantity = item.Count
+				};
+				stripeSessionOptions.LineItems.Add(sessionItem);
+			}
+		}
 
         private double GetPriceBasedOnOrderedQuantity(ShoppingCart shoppingCart)
         {
