@@ -1,4 +1,6 @@
 ﻿using BookWeb.DataAccess.Repository.IRepository;
+using BookWeb.Models;
+using BookWeb.Utility;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,9 +21,28 @@ namespace BookWeb.Areas.Admin.Controllers
 
 		#region API CALLS
 		[HttpGet]
-		public IActionResult GetAll()
+		public IActionResult GetAll(string status)
 		{
-			var orders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser").ToList();
+			IEnumerable<OrderHeader> orders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser").ToList();
+
+			switch (status)
+			{
+				case "inprocess":
+					orders = orders.Where(o => o.OrderStatus == StaticDetails.StatusInProcess);
+					break;
+				case "pending":
+					orders = orders.Where(o => o.OrderStatus == StaticDetails.StatusPending);
+					break;
+				case "completed":
+                    orders = orders.Where(o => o.OrderStatus == StaticDetails.StatusShipped);
+                    break;
+				case "approved":
+                    orders = orders.Where(o => o.OrderStatus == StaticDetails.StatusApproved);
+                    break;
+                default:
+					break;
+			}
+
 			return Json(new { data = orders });
 		}
 		#endregion
