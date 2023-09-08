@@ -10,6 +10,7 @@ using System.Security.Claims;
 namespace BookWeb.Areas.Admin.Controllers
 {
 	[Area("admin")]
+	[Authorize]
 	public class OrderController : Controller
 	{
 		[BindProperty]
@@ -57,6 +58,17 @@ namespace BookWeb.Areas.Admin.Controllers
 			TempData["Success"] = "Order Details Updated Successfully";
 
 			return RedirectToAction(nameof(Details), new { orderId = orderToUpdate.Id});
+		}
+		[HttpPost]
+        [Authorize(Roles = StaticDetails.Role_Admin + "," + StaticDetails.Role_Employee)]
+        public IActionResult StartProcessing() 
+		{
+			_unitOfWork.OrderHeader.UpdateStatus(OrderVm.OrderHeader.Id, StaticDetails.StatusInProcess);
+			_unitOfWork.Save();
+
+			TempData["Success"] = "Order Processing is Successfull";
+
+			return RedirectToAction(nameof(Details), new { orderId = OrderVm.OrderHeader.Id});
 		}
 
 		#region API CALLS
