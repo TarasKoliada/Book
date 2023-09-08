@@ -3,13 +3,12 @@ using BookWeb.Models;
 using BookWeb.Models.ViewModels;
 using BookWeb.Utility;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace BookWeb.Areas.Admin.Controllers
 {
-	[Area("admin")]
+    [Area("admin")]
 	[Authorize]
 	public class OrderController : Controller
 	{
@@ -71,8 +70,28 @@ namespace BookWeb.Areas.Admin.Controllers
 			return RedirectToAction(nameof(Details), new { orderId = OrderVm.OrderHeader.Id});
 		}
 
-		#region API CALLS
-		[HttpGet]
+        [HttpPost]
+        [Authorize(Roles = StaticDetails.Role_Admin + "," + StaticDetails.Role_Employee)]
+        public IActionResult ShipOrder()
+        {
+			var order = _unitOfWork.OrderHeader.Get(o => o.Id == OrderVm.OrderHeader.Id);
+			order.Carrier = OrderVm.OrderHeader.Carrier;
+			order.TrackingNumber = OrderVm.OrderHeader.TrackingNumber;
+			order.OrderStatus = StaticDetails.StatusShipped;
+			order.ShippingDate = DateTime.Now;
+			if (order.PaymentStatus == StaticDetails.PaymentStatusDelayedPayment)
+				order.PaymentDueDate = DateTime.Now.AddDays(30);
+
+			_unitOfWork.OrderHeader.Update(order);
+            _unitOfWork.Save();
+
+            TempData["Success"] = "Order Shipped Successfully";
+
+            return RedirectToAction(nameof(Details), new { orderId = OrderVm.OrderHeader.Id });
+        }
+
+        #region API CALLS
+        [HttpGet]
 		public IActionResult GetAll(string status)
 		{
 			IEnumerable<OrderHeader> orders;
