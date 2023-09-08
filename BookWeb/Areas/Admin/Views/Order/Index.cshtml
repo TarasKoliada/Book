@@ -13,18 +13,23 @@
     {
         case "pending":
             pending = "active text-white bg-primary";
+            TempData["status"] = "pending";
             break;
         case "inprocess":
             inprocess = "active text-white bg-primary";
+            TempData["status"] = "inprocess";
             break;
         case "completed":
             completed = "active text-white bg-primary";
+            TempData["status"] = "completed";
             break;
         case "approved":
             approved = "active text-white bg-primary";
+            TempData["status"] = "approved";
             break;
         default:
             all = "active text-white bg-primary";
+            TempData["status"] = "all";
             break;
     }
 
