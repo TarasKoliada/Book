@@ -4,6 +4,7 @@ using BookWeb.Models.ViewModels;
 using BookWeb.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using System.Security.Claims;
 
 namespace BookWeb.Areas.Admin.Controllers
@@ -86,6 +87,36 @@ namespace BookWeb.Areas.Admin.Controllers
             _unitOfWork.Save();
 
             TempData["Success"] = "Order Shipped Successfully";
+
+            return RedirectToAction(nameof(Details), new { orderId = OrderVm.OrderHeader.Id });
+        }
+
+		[HttpPost]
+        [Authorize(Roles = StaticDetails.Role_Admin + "," + StaticDetails.Role_Employee)]
+        public IActionResult CancelOrder()
+		{
+			var order = _unitOfWork.OrderHeader.Get(o => o.Id == OrderVm.OrderHeader.Id);
+
+			//Payment approved - give a refund
+			if (order.PaymentStatus == StaticDetails.PaymentStatusApproved)
+			{
+				var options = new RefundCreateOptions
+				{
+					Reason = RefundReasons.RequestedByCustomer,
+					PaymentIntent = order.PaymentIntentId
+				};
+				var refundService = new RefundService();
+				Refund refund = refundService.Create(options);
+
+				_unitOfWork.OrderHeader.UpdateStatus(order.Id, StaticDetails.StatusCancelled, StaticDetails.StatusRefunded);
+			}
+			else
+				_unitOfWork.OrderHeader.UpdateStatus(order.Id, StaticDetails.StatusCancelled, StaticDetails.StatusCancelled);
+
+            _unitOfWork.OrderHeader.Update(order);
+            _unitOfWork.Save();
+
+            TempData["Success"] = "Order Cancelled Successfully";
 
             return RedirectToAction(nameof(Details), new { orderId = OrderVm.OrderHeader.Id });
         }
