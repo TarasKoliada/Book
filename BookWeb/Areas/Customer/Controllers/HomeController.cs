@@ -1,5 +1,6 @@
 ﻿using BookWeb.DataAccess.Repository.IRepository;
 using BookWeb.Models;
+using BookWeb.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -41,16 +42,19 @@ namespace BookWeb.Areas.Customer.Controllers
             {
                 cartFromDb.Count += shoppingCart.Count;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
+                _unitOfWork.Save();
                 TempData["success"] = "Cart updated successfully";
             }
             else //shopping cart didnt exist
             {
                 shoppingCart.UserId = userId;
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.Save();
+                HttpContext.Session.SetInt32(StaticDetails.SessionCart, _unitOfWork.ShoppingCart.GetAll(c => c.UserId == userId).Count());
                 TempData["success"] = "Cart created successfully";
             }
             
-            _unitOfWork.Save();
+            
             return RedirectToAction(nameof(Index));
         }
 
