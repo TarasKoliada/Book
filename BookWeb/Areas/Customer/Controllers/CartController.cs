@@ -145,7 +145,8 @@ namespace BookWeb.Areas.Customer.Controllers
         {
             var cartItem = _unitOfWork.ShoppingCart.Get(sc => sc.Id == cartItemId);
             if (cartItem.Count <= 1)
-            { 
+            {
+                HttpContext.Session.SetInt32(StaticDetails.SessionCart, _unitOfWork.ShoppingCart.GetAll(c => c.UserId == cartItem.UserId).Count() - 1);
                 _unitOfWork.ShoppingCart.Remove(cartItem); 
             }
             else
@@ -161,6 +162,7 @@ namespace BookWeb.Areas.Customer.Controllers
         public IActionResult Remove(int cartItemId)
         {
             var cartItem = _unitOfWork.ShoppingCart.Get(sc => sc.Id == cartItemId);
+            HttpContext.Session.SetInt32(StaticDetails.SessionCart, _unitOfWork.ShoppingCart.GetAll(c => c.UserId == cartItem.UserId).Count() - 1);
             _unitOfWork.ShoppingCart.Remove(cartItem);
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));

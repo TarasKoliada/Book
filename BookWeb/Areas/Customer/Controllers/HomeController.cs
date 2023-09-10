@@ -20,7 +20,18 @@ namespace BookWeb.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index() => View(_unitOfWork.Product.GetAll(includeProperties: "Category"));
+        public IActionResult Index()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (claim != null)
+                HttpContext.Session.SetInt32(StaticDetails.SessionCart, _unitOfWork.ShoppingCart.GetAll(c => c.UserId == claim.Value).Count());
+            
+
+            return View(_unitOfWork.Product.GetAll(includeProperties: "Category"));
+        }
+            
         public IActionResult Details(int id) => View(new ShoppingCart 
         {
             Product = _unitOfWork.Product.Get(p => p.Id == id, includeProperties: "Category"), 
