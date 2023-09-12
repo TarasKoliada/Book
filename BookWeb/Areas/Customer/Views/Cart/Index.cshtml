@@ -75,9 +75,32 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2 offset-md-5">
-                        <a asp-action="Summary" class="btn btn-primary border-0 bg-gradient w-100 py-2">Summary</a>
+                        <a onclick="return checkExistingCartItems(@Model.ShoppingCartsList.Count())" asp-action="Summary" class="btn btn-primary border-0 bg-gradient w-100 py-2">Summary</a>
                     </div>
                 </div>
             </div>
-        </div>ppp
+        </div>
 </form>
+
+@section Scripts
+{
+    <script>
+        function checkExistingCartItems(cartItemsCount)
+        {
+            if (cartItemsCount == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    html: 'You have no items added to your cart!<br>Select a product first and then go to the cart!',
+                    confirmButtonText: 'Move to the Home page'
+                }).then((result) => {
+                    if(result){
+                        window.location.href = "/Customer/Home/Index";
+                    }
+                });
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
